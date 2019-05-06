@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: simulation-@SHORTNAME@
+  labels:
+    group: simulation
+    test: rare-@SHORTNAME@
+spec:
+  parallelism: @PARALLELISM@
+  completions: @COMPLETIONS@
+  template:
+    metadata:
+      name: sim-@SHORTNAME@
+      labels:
+        group: simulation
+        test: @SHORTNAME@
+    spec:
+      containers:
+      - name: sim-@SHORTNAME@
+        image: foundationdb:@VERSIONTAG@
+        args: [ "simulate", "@FILENAME@", "@ROUNDS@" ]
+        resources:
+          limits:
+            memory: @MEMORYLIMIT@
+          requests:
+            memory: @MEMORYREQUEST@
+      restartPolicy: Never
