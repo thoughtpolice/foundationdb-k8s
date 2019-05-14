@@ -4,7 +4,7 @@ metadata:
   name: simulation-@SHORTNAME@
   labels:
     group: simulation
-    test: rare-@SHORTNAME@
+    test: @SHORTNAME@
 spec:
   parallelism: @PARALLELISM@
   completions: @COMPLETIONS@

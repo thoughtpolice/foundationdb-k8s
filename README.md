@@ -149,7 +149,7 @@ metadata:
   name: simulation-fast-atomicops
   labels:
     group: simulation
-    test: rare-fast-atomicops
+    test: fast-atomicops
 spec:
   parallelism: 2
   completions: 4
