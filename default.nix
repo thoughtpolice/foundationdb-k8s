@@ -33,7 +33,11 @@ let
         name = "foundationdb";
         tag = fdb.version;
 
-        contents = with pkgs; [ bash gawk coreutils entrypoint fdb transient-clusterfile ];
+        contents = with pkgs;
+          [ bash bc gawk coreutils
+            entrypoint fdb transient-clusterfile
+          ];
+
         config = {
           Entrypoint = [ "/bin/entrypoint" ];
           WorkingDir = "/data";

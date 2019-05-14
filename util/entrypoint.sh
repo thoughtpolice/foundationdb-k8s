@@ -23,10 +23,20 @@ if [[ "${CMD}" == "simulate" ]]; then
 
         successes=0
         failures=0
+        buggy=0
         for x in $(seq 1 ${ROUNDS}); do
           SEED=$(od -vAn -N4 -tx4 < /dev/urandom | awk '{print "0x"$1}')
-          echo -n "NOTE: running simulation #$x (seed = $SEED)... "
-          fdbserver -r simulation -f "/share/test/${TEST}.txt" -s "$SEED" > /data/sim-log.txt
+          BUGGIFY=$(($RANDOM%2))
+
+          if [ "$BUGGIFY" -eq 0 ]; then
+            BUGGIFY="off"
+          else
+            BUGGIFY="on"
+            buggy=$((buggy+1))
+          fi
+
+          echo -n "NOTE: running simulation #$x (buggify = $BUGGIFY, seed = $SEED)... "
+          fdbserver -r simulation -f "/share/test/${TEST}.txt" -s "$SEED" -b "$BUGGIFY" > /data/sim-log.txt
           ret="$?"
           if [ "$ret" -eq 0 ]; then
             successes=$((successes+1))
@@ -44,7 +54,9 @@ if [[ "${CMD}" == "simulate" ]]; then
           rm -f /data/trace*.xml
         done
 
-        echo "NOTE: finished ${TEST}; $ROUNDS total sim rounds, $successes/$ROUNDS successful sim runs";
+        success_ratio="$(echo "scale=2; ($successes*100)/$ROUNDS" | bc)%"
+        buggy_ratio="$(echo "scale=2; ($buggy*100)/$ROUNDS" | bc)%"
+        echo "NOTE: finished ${TEST}; $ROUNDS total sim rounds, $buggy ($buggy_ratio) which were buggy; $successes/$ROUNDS ($success_ratio) successful sim runs";
         exit 0
 fi
 
